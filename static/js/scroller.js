@@ -19,16 +19,28 @@ function Scroller (element) {
   this._buttons.left.classList.add('left-scroller-button')
   this._buttons.left.onclick = function (e) {
     // Navigate left
-    console.info('Navigate left')
-    _this.scrollToIndex(null, -1)
+    // Find the previous partially visible/invisible element and scroll window
+    // so that it is the last element visible
+    var prevWindowElements = Array.prototype.filter.call(_this._items, function (item) {
+      return ((item.offsetLeft) >= (_this.scrollOffset - _this.windowSize))
+    })
+    var index = Array.prototype.indexOf.call(_this._items, prevWindowElements[0])
+    _this.scrollToIndex(index)
   }
 
   this._buttons.right = document.createElement('button')
   this._buttons.right.classList.add('right-scroller-button')
   this._buttons.right.onclick = function (e) {
-    // Navigate left
-    console.info('Navigate right')
-    _this.scrollToIndex(null, 1)
+    // Navigate right
+    // Find the next partially visible/invisible element and scroll to that
+    var invisibleElements = Array.prototype.filter.call(_this._items, function (item) {
+      return (
+        (item.offsetLeft >= _this.scrollOffset) &&
+        ((item.offsetLeft + item.offsetWidth) > (_this.scrollOffset + _this.windowSize))
+      )
+    })
+    var index = Array.prototype.indexOf.call(_this._items, invisibleElements[0])
+    _this.scrollToIndex(index)
   }
 
   this._container.appendChild(this._buttons.left)
@@ -38,30 +50,29 @@ function Scroller (element) {
 
 Scroller.prototype.calculate = function () {
   var scrollWidth = this._element.scrollWidth
-  var elementWidth = this._element.offsetWidth
-  this._overflow = (scrollWidth > elementWidth)
-  this._element.style.width = elementWidth
+  var windowSize = this._element.offsetWidth
+  this._overflow = (scrollWidth > windowSize)
+  this._element.style.width = windowSize
+  this.scrollWidth = scrollWidth
+  this.windowSize = windowSize
   this.scrollToIndex()
   this.redrawArrows()
 }
 
 Scroller.prototype.scrollToIndex = function (index, relative) {
-  index = index || this.selectedItem + (relative || 0)
+  index = ((typeof index === 'number') ? index : this.selectedItem) + (relative || 0)
   index = Math.max(index, 0)
   index = Math.min(index, this._items.length - 1)
   this.selectedItem = index
 
   var scrollOffset = this._items[this.selectedItem].offsetLeft
-  var windowSize = this._container.offsetWidth
-  var scrollWidth = this._element.scrollWidth
-  if ((scrollOffset + windowSize) >= scrollWidth) {
+  if ((scrollOffset + this.windowSize) >= this.scrollWidth) {
     // Scroll all the way to the right to show the last element
-    // this._element.scrollLeft = this._element.scrollWidth
-    this._element.style.transform = 'translate3d(-' + (scrollWidth - windowSize) + 'px, 0, 0)'
+    this.scrollOffset = this.scrollWidth - this.windowSize
   } else {
-    // this._element.scrollLeft = this._items[index].offsetLeft
-    this._element.style.transform = 'translate3d(-' + scrollOffset + 'px, 0, 0)'
+    this.scrollOffset = scrollOffset
   }
+  this._element.style.transform = 'translate3d(-' + this.scrollOffset + 'px, 0, 0)'
   this.redrawArrows()
 }
 
