@@ -1,0 +1,25 @@
+body {
+   background-color: #ececec;
+   text-align: center;
+}
+
+#demo-scroller {
+   padding: 0;
+   list-style: none;
+   white-space: nowrap;
+   font-size: 0;
+   width: 200px;
+   display: inline-block;
+}
+
+#demo-scroller .scroll-item {
+   background-color: white;
+   border: 1px solid black;
+   padding: 15px;
+   display: inline-block;
+   font-size: 1rem;
+}
+
+.tabs-scroller .left-scroller-button, .tabs-scroller .right-scroller-button {
+  height: 20px;
+}

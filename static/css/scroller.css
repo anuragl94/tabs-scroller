@@ -1,0 +1,26 @@
+.tabs-scroller {
+  position: relative;
+  overflow: hidden;
+}
+
+.tabs-scroller .left-scroller-button {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.tabs-scroller .right-scroller-button {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.tabs-scroller .hidden-button {
+  display: none;
+}
+
+.tabs-scroller-items {
+  transition: transform 0.1s linear;
+}
