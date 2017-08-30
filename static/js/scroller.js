@@ -49,8 +49,12 @@ function Scroller (element) {
 }
 
 Scroller.prototype.calculate = function () {
-  var scrollWidth = this._element.scrollWidth
-  var windowSize = this._element.offsetWidth
+  var scrollWidth = Array.prototype.map.call(this._items, function (item) {
+    return item.offsetWidth
+  }).reduce(function (a, b) {
+    return a + b
+  })
+  var windowSize = this._container.offsetWidth
   this._overflow = (scrollWidth > windowSize)
   this._element.style.width = windowSize
   this.scrollWidth = scrollWidth
@@ -79,7 +83,7 @@ Scroller.prototype.scrollToIndex = function (index, relative) {
 Scroller.prototype.redrawArrows = function () {
   var scrollOffset = this._items[this.selectedItem].offsetLeft
   var windowSize = this._container.offsetWidth
-  var scrollWidth = this._element.scrollWidth
+  var scrollWidth = this.scrollWidth
   if (scrollOffset === 0) {
     this._buttons.left.classList.add('hidden-button')
   } else {
